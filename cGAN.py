@@ -15,8 +15,8 @@ def get_generative(G_in, C_in, dense_dim=160, out_dim=10, lr=1e-3):
     opt = SGD(lr=lr)
 #    opt = Adam(lr=lr)
 #    G.compile(loss='categorical_crossentropy', optimizer=opt)
-    G.compile(loss='binary_crossentropy', optimizer=opt)
-#    G.compile(loss='mean_squared_error', optimizer=opt)
+#    G.compile(loss='binary_crossentropy', optimizer=opt)
+    G.compile(loss='mean_squared_error', optimizer=opt)
     return G, G_out
 
 #G_in = Input(shape=[6])
@@ -27,7 +27,7 @@ def get_discriminative(D_in, C_in, dense_dim = 80, lr=1e-3):
     x = concatenate([D_in, C_in])
     x = Dense(dense_dim)(x)
     x = Activation('relu')(x)
-    D_out = Dense(2, activation='sigmoid')(x)
+    D_out = Dense(1, activation='sigmoid')(x)
     D = Model([D_in, C_in], D_out)
 #    dopt = SGD(lr=lr)
     dopt = Adam(lr=lr)
@@ -83,9 +83,9 @@ def sample_data_and_gen(G, C, samples, noise_dim = 6):
     #print(XN[0])
     #print(XN[-1])
     X = np.concatenate((XT, XN))
-    y = np.zeros((2*size[0], 2))
-    y[:size[0], 1] = 1
-    y[size[0]:, 0] = 1
+    y = np.zeros((2*size[0], 1))
+    y[:size[0]] = 1
+#    y[size[0]:] = 0
     return X, y
 
 def pretrain(G, D, C_samples, samples, noise_dim = 6, batch_size=64, epoches = 1000):
@@ -97,8 +97,9 @@ def pretrain(G, D, C_samples, samples, noise_dim = 6, batch_size=64, epoches = 1
 def sample_noise(G, samples, noise_dim=6):
     size = list(samples.shape)
     X = np.random.uniform(0, 1, size=[size[0], noise_dim])
-    y = np.zeros((size[0], 2))
-    y[:, 1] = 1
+    y = np.ones((size[0], 1))
+#    y = np.zeros((size[0], 2))
+#    y[:, 1] = 1
     return X, y
 
 
