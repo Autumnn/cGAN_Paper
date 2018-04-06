@@ -64,7 +64,7 @@ GAN, GAN_out = gan.make_gan(GAN_in, C_in, G, D)
 GAN.summary()
 
 Pre_train_epoches = 100
-Train_epoches = 10000
+Train_epoches = 2000
 gan.pretrain(G, D, condition_samples,Feature_samples, noise_dim=input_dim, epoches=Pre_train_epoches)
 d_loss, g_loss = gan.train(GAN, G, D, condition_samples,Feature_samples, epochs= Train_epoches , noise_dim=input_dim, verbose=True)
 Model_name = "cGAN_A_G-dense_" + str(G_dense) + "_pretrain_" + str(Pre_train_epoches) + "_D-dense_" + str(D_dense) + "_maintrain_" + str(Train_epoches) + ".h5"
