@@ -6,14 +6,15 @@ from tqdm import tqdm_notebook as tqdm
 from ipywidgets import IntProgress
 import numpy as np
 
-def get_generative(G_in, C_in, dense_dim=300, out_dim=10, lr=1e-3):
+def get_generative(G_in, C_in, dense_dim=160, out_dim=10, lr=1e-3):
     x = concatenate([G_in, C_in])
     x = Dense(dense_dim)(x)
-    x = Activation('tanh')(x)
-    G_out = Dense(out_dim, activation='tanh')(x)
+    x = Activation('relu')(x)
+    G_out = Dense(out_dim, activation='sigmoid')(x)
     G = Model([G_in, C_in], G_out)
-    opt = SGD(lr=lr)
-#    opt = Adam(lr=lr)
+#    opt = SGD(lr=lr)
+    opt = Adam(lr=lr)
+#    G.compile(loss='categorical_crossentropy', optimizer=opt)
     G.compile(loss='binary_crossentropy', optimizer=opt)
 #    G.compile(loss='mean_squared_error', optimizer=opt)
     return G, G_out
@@ -22,12 +23,13 @@ def get_generative(G_in, C_in, dense_dim=300, out_dim=10, lr=1e-3):
 #G, G_out = get_generative(G_in)
 #G.summary()
 
-def get_discriminative(D_in, C_in, dense_dim = 200, lr=1e-3):
+def get_discriminative(D_in, C_in, dense_dim = 80, lr=1e-3):
     x = concatenate([D_in, C_in])
     x = Dense(dense_dim)(x)
-    x = Activation('sigmoid')(x)
+    x = Activation('relu')(x)
     D_out = Dense(2, activation='sigmoid')(x)
     D = Model([D_in, C_in], D_out)
+#    dopt = SGD(lr=lr)
     dopt = Adam(lr=lr)
     D.compile(loss='binary_crossentropy', optimizer=dopt)
     return D, D_out
