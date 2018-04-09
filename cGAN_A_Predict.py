@@ -22,7 +22,7 @@ print('Load Model')
 G_dense = 160
 D_dense = 80
 Pre_train_epoches = 100
-Train_epoches = 2000
+Train_epoches = 20000
 Model_name = "cGAN_A_G-dense_" + str(G_dense) + "_pretrain_" + str(Pre_train_epoches) + "_D-dense_" + str(D_dense) + "_maintrain_" + str(Train_epoches) + ".h5"
 model = load_model(Model_name)
 
