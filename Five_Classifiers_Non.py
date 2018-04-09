@@ -1,11 +1,10 @@
-import math
 import numpy as np
 from sklearn import svm, preprocessing, metrics
 from sklearn.model_selection import StratifiedKFold
 import Read_Data_UCI as RD
-#import Read_Data as RD
-from imblearn.over_sampling import SMOTE
 from imblearn.metrics import geometric_mean_score
+
+#  first "min_max_scalar" ant then "StratifiedKFold".
 
 dir = "yeast.data"
 RD.Initialize_Data(dir)
@@ -18,7 +17,8 @@ Num_Cross_Folders = 5
 min_max_scalar = preprocessing.MinMaxScaler()
 Re_Features = min_max_scalar.fit_transform(Features)
 
-skf = StratifiedKFold(n_splits=Num_Cross_Folders, shuffle=True)
+#skf = StratifiedKFold(n_splits=Num_Cross_Folders, shuffle=True)
+skf = StratifiedKFold(n_splits=Num_Cross_Folders, shuffle=False)
 G_Mean = np.linspace(0,0,Num_Cross_Folders)
 F_Mean = np.linspace(0,0,Num_Cross_Folders)
 AUC = np.linspace(0,0,Num_Cross_Folders)
@@ -47,7 +47,7 @@ for train_index, test_index in skf.split(Re_Features, Labels):
             Label_score = clf.decision_function(Feature_test)
             AUC_temp[j, k] = metrics.roc_auc_score(Label_test, Label_score)
 
-    print(G_Mean_temp)
+#    print(G_Mean_temp)
 #    print(F_Mean_temp)
 
     G_Mean[i] = np.max(G_Mean_temp)

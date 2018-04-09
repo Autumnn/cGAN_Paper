@@ -1,8 +1,8 @@
 import numpy as np
 
-
-a = np.random.randint(10, size=(5,2))
+a = np.random.randint(1,10,5)
 print(a)
-b = np.max(a, axis=0)
+b = np.random.randint(11, 20, 3)
 print(b)
-print(np.max(a))
+a = np.concatenate((a, b))
+print(a[4:10])
