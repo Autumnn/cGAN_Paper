@@ -15,8 +15,8 @@ def get_generative(G_in, C_in, dense_dim=160, out_dim=10, lr=1e-3):
     opt = SGD(lr=lr)
 #    opt = Adam(lr=lr)
 #    G.compile(loss='categorical_crossentropy', optimizer=opt)
-#    G.compile(loss='binary_crossentropy', optimizer=opt)
-    G.compile(loss='mean_squared_error', optimizer=opt)
+    G.compile(loss='binary_crossentropy', optimizer=opt)
+#    G.compile(loss='mean_squared_error', optimizer=opt)
     return G, G_out
 
 #G_in = Input(shape=[6])

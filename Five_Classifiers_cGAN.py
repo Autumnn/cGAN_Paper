@@ -9,9 +9,9 @@ from imblearn.metrics import geometric_mean_score
 
 #  first "min_max_scalar" ant then "StratifiedKFold".
 
-dir = "yeast.data"
+dir = "UCI/yeast.data"
 RD.Initialize_Data(dir)
-name = dir.split(".")[0]
+name = dir.split(".")[0].split("/")[1]
 
 Features = RD.get_feature()
 Labels = RD.get_label().ravel()
@@ -37,10 +37,10 @@ GAN.summary()
 
 Pre_train_epoches = 100
 Train_epoches = 10000
-#gan.pretrain(G, D, Labels, Features, noise_dim=input_dim, epoches=Pre_train_epoches)
-#d_loss, g_loss = gan.train(GAN, G, D, Labels, Features, epochs=Train_epoches, noise_dim=input_dim, verbose=True)
+gan.pretrain(G, D, Labels, Re_Features, noise_dim=input_dim, epoches=Pre_train_epoches)
+d_loss, g_loss = gan.train(GAN, G, D, Labels, Features, epochs=Train_epoches, noise_dim=input_dim, verbose=True)
 Model_name = "cGAN_" + name + "_G-dense_" + str(G_dense) + "_pretrain_" + str(Pre_train_epoches) + "_D-dense_" + str(D_dense) + "_epoches_" + str(Train_epoches) + ".h5"
-#G.save(Model_name)
+G.save(Model_name)
 
 model = load_model(Model_name)
 Num_Create_samples = RD.Num_negative - RD.Num_positive

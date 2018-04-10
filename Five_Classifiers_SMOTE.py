@@ -5,9 +5,9 @@ import Read_Data_UCI as RD
 from imblearn.over_sampling import SMOTE
 from imblearn.metrics import geometric_mean_score
 
-dir = "yeast.data"
+dir = "UCI/yeast.data"
 RD.Initialize_Data(dir)
-name = dir.split(".")[0]
+name = dir.split(".")[0].split("/")[1]
 
 Features = RD.get_feature()
 Labels = RD.get_label().ravel()
@@ -15,6 +15,11 @@ Labels = RD.get_label().ravel()
 Num_Cross_Folders = 5
 min_max_scalar = preprocessing.MinMaxScaler()
 Re_Features = min_max_scalar.fit_transform(Features)
+
+sm = SMOTE()
+Feature_train_o, Label_train_o = sm.fit_sample(Re_Features, Labels)
+Feature_train_t = Feature_train_o[len(Re_Features):]
+Label_train_t = Label_train_o[len(Labels):]
 
 #skf = StratifiedKFold(n_splits=Num_Cross_Folders, shuffle=True)
 skf = StratifiedKFold(n_splits=Num_Cross_Folders, shuffle=False)
@@ -24,11 +29,11 @@ AUC = np.linspace(0,0,Num_Cross_Folders)
 
 i = 0
 for train_index, test_index in skf.split(Re_Features, Labels):
-    Feature_train_o, Feature_test = Re_Features[train_index], Re_Features[test_index]
-    Label_train_o, Label_test = Labels[train_index], Labels[test_index]
-
-    sm = SMOTE()
-    Feature_train, Label_train = sm.fit_sample(Feature_train_o, Label_train_o)
+    Feature_train, Feature_test = Re_Features[train_index], Re_Features[test_index]
+    Label_train, Label_test = Labels[train_index], Labels[test_index]
+    num = np.ceil(len(Feature_train_t)/Num_Cross_Folders)
+    Feature_train = np.concatenate((Feature_train, Feature_train_t[int(i*num):int((i+1)*num)]))
+    Label_train = np.concatenate((Label_train, Label_train_t[int(i*num):int((i+1)*num)]))
 
     Num_Gamma = 12
     gamma = np.logspace(-2, 1, Num_Gamma)

@@ -6,12 +6,13 @@ from imblearn.metrics import geometric_mean_score
 
 #  first "min_max_scalar" ant then "StratifiedKFold".
 
-dir = "yeast.data"
+dir = "UCI/yeast.data"
 RD.Initialize_Data(dir)
-name = dir.split(".")[0]
+name = dir.split(".")[0].split("/")[1]
 
 Features = RD.get_feature()
 Labels = RD.get_label().ravel()
+#print(np.array(np.nonzero(Labels)).shape[1])
 
 Num_Cross_Folders = 5
 min_max_scalar = preprocessing.MinMaxScaler()
@@ -27,6 +28,12 @@ i = 0
 for train_index, test_index in skf.split(Re_Features, Labels):
     Feature_train_o, Feature_test = Re_Features[train_index], Re_Features[test_index]
     Label_train_o, Label_test = Labels[train_index], Labels[test_index]
+
+#    print(np.array(np.nonzero(Label_train_o)).shape[1])
+#    print(Label_train_o.shape[0])
+#    print(np.array(np.nonzero(Label_test)).shape[1])
+#    print(Label_test.shape[0])
+
     Num_Gamma = 12
     gamma = np.logspace(-2, 1, Num_Gamma)
     Num_C = 6
@@ -37,7 +44,7 @@ for train_index, test_index in skf.split(Re_Features, Labels):
 
     for j in range(Num_Gamma):
         for k in range(Num_C):
-            print("gamma = ", str(gamma[j]), " C = ", str(C[k]))
+#            print("gamma = ", str(gamma[j]), " C = ", str(C[k]))
             clf = svm.SVC(C=C[k], kernel='rbf', gamma=gamma[j])
             clf.fit(Feature_train_o, Label_train_o)
             Label_predict = clf.predict(Feature_test)
