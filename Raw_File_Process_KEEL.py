@@ -100,9 +100,13 @@ for file in files:
     name = dir.split(".")[0].split("/")[1]
     Initialize_Data(dir)
 
-    #print(Positive_Feature[0])
-    if Positive_Feature.shape[0] < 10:
-        print("Positive:", Positive_Feature.shape)
-    #print(Negative_Feature[0])
-        print("Negative:", Negative_Feature.shape)
+    print(Positive_Feature[0])
+    print(Positive_Feature.shape)
+    print(Negative_Feature[0])
+    print(Negative_Feature.shape)
 
+    npy_name = name + ".npz"
+    if Positive_Feature.shape[0] > Negative_Feature.shape[0]:
+        np.savez(npy_name, P_F = Negative_Feature, N_F = Positive_Feature)
+    else:
+        np.savez(npy_name, P_F = Positive_Feature, N_F = Negative_Feature)

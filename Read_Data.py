@@ -1,5 +1,5 @@
 from __future__ import print_function
-import os
+from matplotlib import pyplot as plt
 import numpy as np
 
 def Initialize_Data(dir):
@@ -43,11 +43,8 @@ def Initialize_Data(dir):
                 length_row = len(row)
                 # print('Row length',length_row)
                 # print(row[0])
-                #print(l)
                 for i in range(length_row):
                     if i < length_row - 1:
-                        if row[i] == '<null>':
-                            row[i] = 0
                         Features[l - data_info_lines - 1][i] = row[i]
                         # print(Features[l-14][i])
                     else:
@@ -91,18 +88,4 @@ def get_positive_feature():
 
 def get_negative_feature():
     return Negative_Feature
-
-path = "KEEL_Data"
-files = os.listdir(path)
-for file in files:
-    print('File name: ', file)
-    dir = path + '/' + file
-    name = dir.split(".")[0].split("/")[1]
-    Initialize_Data(dir)
-
-    #print(Positive_Feature[0])
-    if Positive_Feature.shape[0] < 10:
-        print("Positive:", Positive_Feature.shape)
-    #print(Negative_Feature[0])
-        print("Negative:", Negative_Feature.shape)
 

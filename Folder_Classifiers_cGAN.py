@@ -10,7 +10,7 @@ from imblearn.metrics import geometric_mean_score
 
 #  first "min_max_scalar" ant then "StratifiedKFold".
 
-path = "UCI_npz"
+path = "KEEL_npz"
 files= os.listdir(path) #Get files in the folder
 for file in files:
     print("File Name: ", file)
@@ -33,7 +33,10 @@ for file in files:
     min_max_scalar = preprocessing.MinMaxScaler()
     Re_Features = min_max_scalar.fit_transform(Features)
 
-    input_dim, G_dense, D_dense = cGANStructure.Structure(name)
+#    input_dim, G_dense, D_dense = cGANStructure.Structure(name) # for UCI data
+    input_dim = 10
+    G_dense = 300
+    D_dense = 150
 
     print('Generate Models')
     G_in = Input(shape=[input_dim])

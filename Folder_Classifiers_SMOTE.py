@@ -5,7 +5,7 @@ from sklearn.model_selection import StratifiedKFold
 from imblearn.over_sampling import SMOTE
 from imblearn.metrics import geometric_mean_score
 
-path = "UCI_npz"
+path = "KEEL_npz"
 files= os.listdir(path) #Get files in the folder
 for file in files:
     print("File Name: ", file)
