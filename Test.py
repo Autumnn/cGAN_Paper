@@ -33,7 +33,7 @@ def Initialize_Data(dir):
     Num_negative = 0
 
     with open(dir, "r") as data_file:
-        print("Read Data", data_file.name)
+        #print("Read Data", data_file.name)
         l = 0
         for line in data_file:
             l += 1
@@ -78,7 +78,7 @@ def Initialize_Data(dir):
             Negative_Feature[index_negative] = Features[i]
             index_negative += 1
 
-    print("Read Completed")
+    #print("Read Completed")
 
 def get_feature():
     return Features
@@ -95,14 +95,18 @@ def get_negative_feature():
 path = "KEEL_Data"
 files = os.listdir(path)
 for file in files:
-    print('File name: ', file)
+    #print('File name: ', file)
     dir = path + '/' + file
     name = dir.split(".")[0].split("/")[1]
     Initialize_Data(dir)
 
-    #print(Positive_Feature[0])
-    if Positive_Feature.shape[0] < 10:
-        print("Positive:", Positive_Feature.shape)
-    #print(Negative_Feature[0])
-        print("Negative:", Negative_Feature.shape)
+    dir_1 = "KEEL_npz/" + name + ".npz"
+    r = np.load(dir_1)
 
+    P_F = r["P_F"]
+    Num_Positive = P_F.shape[0]
+    N_F = r["N_F"]
+    Num_Negative = N_F.shape[0]
+
+    print("File :", Positive_Feature.shape[0], " npz :", Num_Positive)
+    print("File :", Negative_Feature.shape[0], " npz :", Num_Negative)

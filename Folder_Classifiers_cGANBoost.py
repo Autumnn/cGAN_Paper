@@ -9,7 +9,7 @@ from imblearn.metrics import geometric_mean_score
 
 #  first "min_max_scalar" ant then "StratifiedKFold".
 
-path = "UCI_npz"
+path = "KEEL_npz"
 files= os.listdir(path) #Get files in the folder
 for file in files:
     print("File Name: ", file)
@@ -32,12 +32,15 @@ for file in files:
     min_max_scalar = preprocessing.MinMaxScaler()
     Re_Features = min_max_scalar.fit_transform(Features)
 
-    input_dim, G_dense, D_dense = cGANStructure.Structure(name)
+#    input_dim, G_dense, D_dense = cGANStructure.Structure(name)
+    input_dim = 10
+    G_dense = 300
+    D_dense = 150
 
     Pre_train_epoches = 100
     Train_epoches = 10000
     Model_name = "cGAN_" + name + "_G-dense_" + str(G_dense) + "_pretrain_" + str(Pre_train_epoches) + "_D-dense_" + str(D_dense) + "_epoches_" + str(Train_epoches) + ".h5"
-    Model_path = "cGAN_Model"
+    Model_path = "KEEL_cGAN_Model"
     model = load_model(Model_path + "/" + Model_name)
     Num_Create_samples = Num_Negative - Num_Positive
 
@@ -61,8 +64,10 @@ for file in files:
             print(num_positive)
             print(num_negative)
         Num_Create_samples= num_negative - num_positive
+        Num_estimators = 30
+        Num_samples = int(np.ceil(Num_Create_samples/Num_estimators))
 
-        cganboost = cGANBoost(n_samples=Num_Create_samples, n_estimators=100)
+        cganboost = cGANBoost(n_samples=Num_samples, n_estimators=Num_estimators)
         cganboost.fit(Feature_train_o, Label_train_o, model, input_dim)
 
         Label_predict = cganboost.predict(Feature_test)

@@ -8,7 +8,7 @@ from Reidjohnson.smote import SMOTEBoost
 
 #  first "min_max_scalar" ant then "StratifiedKFold".
 
-path = "KEEL_npz"
+path = "UCI_npz"
 files= os.listdir(path) #Get files in the folder
 for file in files:
     print("File Name: ", file)
@@ -46,8 +46,10 @@ for file in files:
             print(num_positive)
             print(num_negative)
         Num_Create_samples= num_negative - num_positive
+        Num_estimators = 30
+        Num_samples = int(np.ceil(Num_Create_samples/Num_estimators))
 
-        smboost = SMOTEBoost(n_samples=Num_Create_samples, n_estimators=100)
+        smboost = SMOTEBoost(n_samples=Num_samples, n_estimators=Num_estimators)
         smboost.fit(Feature_train_o, Label_train_o)
 
         Label_predict = smboost.predict(Feature_test)
@@ -59,27 +61,27 @@ for file in files:
         i += 1
 
 
-    file_wirte_AUC = "AUC_Result.txt"
+    file_wirte_AUC = "AUC_Result_UCI.txt"
     with open(file_wirte_AUC,'a') as w:
-        AUC_line = name + '\t' + "SMOTEBoost" + '\t'
+        AUC_line = name + '\t' + "SMOTEBoost-SVM" + '\t'
         AUC_line += '\t'.join(str(x) for x in AUC)
         mean = np.mean(AUC)
         var = np.var(AUC)
         AUC_line += '\t' + str(mean) + '\t' + str(var) + '\n'
         w.write(AUC_line)
 
-    file_wirte_G = "G_Result.txt"
+    file_wirte_G = "G_Result_UCI.txt"
     with open(file_wirte_G, 'a') as w_g:
-        G_line = name + '\t' + "SMOTEBoost" + '\t'
+        G_line = name + '\t' + "SMOTEBoost-SVM" + '\t'
         G_line += '\t'.join(str(x) for x in G_Mean)
         mean = np.mean(G_Mean)
         var = np.var(G_Mean)
         G_line += '\t' + str(mean) + '\t' + str(var) + '\n'
         w_g.write(G_line)
 
-    file_wirte_F = "F_Result.txt"
+    file_wirte_F = "F_Result_UCI.txt"
     with open(file_wirte_F, 'a') as w_f:
-        F_line = name + '\t' + "SMOTEBoost" + '\t'
+        F_line = name + '\t' + "SMOTEBoost-SVM" + '\t'
         F_line += '\t'.join(str(x) for x in F_Mean)
         mean = np.mean(F_Mean)
         var = np.var(F_Mean)

@@ -4,7 +4,7 @@ import numpy as np
 from sklearn.base import is_regressor
 from sklearn.ensemble import AdaBoostClassifier
 from sklearn.ensemble.forest import BaseForest
-from sklearn.neighbors import NearestNeighbors
+from imblearn.over_sampling import SMOTE
 from sklearn.preprocessing import normalize
 from sklearn.tree.tree import BaseDecisionTree
 from sklearn.utils import check_random_state
@@ -12,7 +12,8 @@ from sklearn.utils import check_X_y
 from sklearn.svm import SVC
 #from sklearn.utils import shuffle
 
-class cGANBoost(AdaBoostClassifier):
+
+class SMOTEBoost(AdaBoostClassifier):
     """Implementation of SMOTEBoost.
 
     SMOTEBoost introduces data sampling into the AdaBoost algorithm by
@@ -61,23 +62,25 @@ class cGANBoost(AdaBoostClassifier):
                  n_samples=100,
                  k_neighbors=5,
                  #base_estimator=None,
-                 base_estimator=SVC(probability=True, kernel='linear'),
+                 base_estimator = SVC(probability=True, kernel='linear'),
                  n_estimators=50,
                  learning_rate=1.,
                  #algorithm='SAMME.R',
                  algorithm='SAMME',
-                 random_state=None,):
+                 random_state=None):
 
         self.n_samples = n_samples
         self.algorithm = algorithm
+        self.smote = SMOTE(k_neighbors=k_neighbors,
+                           random_state=random_state)
 
-        super(cGANBoost, self).__init__(
+        super(SMOTEBoost, self).__init__(
             base_estimator=base_estimator,
             n_estimators=n_estimators,
             learning_rate=learning_rate,
             random_state=random_state)
 
-    def fit(self, X, y, model, input_dim, sample_weight=None, minority_target=None):
+    def fit(self, X, y, sample_weight=None, minority_target=None):
         """Build a boosted classifier/regressor from the training set (X, y),
         performing SMOTE during each boosting step.
 
@@ -164,15 +167,14 @@ class cGANBoost(AdaBoostClassifier):
 
         for iboost in range(self.n_estimators):
             # SMOTE step.
-            #X_min = X[np.where(y == self.minority_target)]
+ #           X_min = X[np.where(y == self.minority_target)]
+ #           self.smote.fit(X_min)
+ #           X_syn = self.smote.sample(self.n_samples)
+ #           y_syn = np.full(X_syn.shape[0], fill_value=self.minority_target, dtype=np.int64)
 
-            Noise_Input = np.random.uniform(0, 1, size=[self.n_samples, input_dim])
-            condition_samples = np.linspace(1,1,self.n_samples)
-
-            X_syn = model.predict([Noise_Input, condition_samples])
-
-            y_syn = np.full(X_syn.shape[0], fill_value=self.minority_target,
-                            dtype=np.int64)
+            X_temp, y_temp = self.smote.fit(X, y)
+            X_syn = X_temp[len(X):]
+            y_syn = y_syn[len(y):]
 
             # Normalize synthetic sample weights based on current training set.
             sample_weight_syn = np.empty(X_syn.shape[0], dtype=np.float64)

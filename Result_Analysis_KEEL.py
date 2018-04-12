@@ -1,6 +1,6 @@
 import numpy as np
 
-file = "AUC_Result_UCI.txt"
+file = "AUC_Result.txt"
 i = 0
 with open(file, "r") as r:
     print(r.name)
@@ -21,7 +21,7 @@ with open(file, "r") as r:
 
 method_list = dic[temp].keys()
 
-file_write = "AUC_Result_Analysis_UCI.txt"
+file_write = "AUC_Result_Analysis_KEEL.txt"
 with open(file_write, 'a') as w:
     first_line = "dataset" + '\t' + '\t'.join(str(x) + '\t' for x in method_list) + '\n'
     w.write(first_line)
