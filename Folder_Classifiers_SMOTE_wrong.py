@@ -5,7 +5,7 @@ from sklearn.model_selection import StratifiedKFold
 from imblearn.over_sampling import SMOTE
 from imblearn.metrics import geometric_mean_score
 
-path = "UCI_npz"
+path = "KEEL_npz"
 files= os.listdir(path) #Get files in the folder
 for file in files:
     print("File Name: ", file)
@@ -27,6 +27,11 @@ for file in files:
     min_max_scalar = preprocessing.MinMaxScaler()
     Re_Features = min_max_scalar.fit_transform(Features)
 
+    sm = SMOTE()
+    Feature_train_o, Label_train_o = sm.fit_sample(Re_Features, Labels)
+    Feature_train_t = Feature_train_o[len(Re_Features):]
+    Label_train_t = Label_train_o[len(Labels):]
+
     #skf = StratifiedKFold(n_splits=Num_Cross_Folders, shuffle=True)
     skf = StratifiedKFold(n_splits=Num_Cross_Folders, shuffle=False)
     G_Mean = np.linspace(0,0,Num_Cross_Folders)
@@ -35,10 +40,11 @@ for file in files:
 
     i = 0
     for train_index, test_index in skf.split(Re_Features, Labels):
-        Feature_train_o, Feature_test = Re_Features[train_index], Re_Features[test_index]
-        Label_train_o, Label_test = Labels[train_index], Labels[test_index]
-        sm = SMOTE()
-        Feature_train, Label_train = sm.fit_sample(Feature_train_o, Label_train_o)
+        Feature_train, Feature_test = Re_Features[train_index], Re_Features[test_index]
+        Label_train, Label_test = Labels[train_index], Labels[test_index]
+        num = np.ceil(len(Feature_train_t)/Num_Cross_Folders)
+        Feature_train = np.concatenate((Feature_train, Feature_train_t[int(i*num):int((i+1)*num)]))
+        Label_train = np.concatenate((Label_train, Label_train_t[int(i*num):int((i+1)*num)]))
 
         Num_Gamma = 12
         gamma = np.logspace(-2, 1, Num_Gamma)
@@ -68,27 +74,27 @@ for file in files:
         AUC[i] = np.max(AUC_temp)
         i += 1
 
-    file_wirte_AUC = "AUC_Result_UCI.txt"
+    file_wirte_AUC = "AUC_Result.txt"
     with open(file_wirte_AUC, 'a') as w:
-        AUC_line = name + '\t' + "SMOTE-a-SVM" + '\t'
+        AUC_line = name + '\t' + "SMOTE-SVM" + '\t'
         AUC_line += '\t'.join(str(x) for x in AUC)
         mean = np.mean(AUC)
         var = np.var(AUC)
         AUC_line += '\t' + str(mean) + '\t' + str(var) + '\n'
         w.write(AUC_line)
 
-    file_wirte_G = "G_Result_UCI.txt"
+    file_wirte_G = "G_Result.txt"
     with open(file_wirte_G, 'a') as w_g:
-        G_line = name + '\t' + "SMOTE-a-SVM" + '\t'
+        G_line = name + '\t' + "SMOTE-SVM" + '\t'
         G_line += '\t'.join(str(x) for x in G_Mean)
         mean = np.mean(G_Mean)
         var = np.var(G_Mean)
         G_line += '\t' + str(mean) + '\t' + str(var) + '\n'
         w_g.write(G_line)
 
-    file_wirte_F = "F_Result_UCI.txt"
+    file_wirte_F = "F_Result.txt"
     with open(file_wirte_F, 'a') as w_f:
-        F_line = name + '\t' + "SMOTE-a-SVM" + '\t'
+        F_line = name + '\t' + "SMOTE-SVM" + '\t'
         F_line += '\t'.join(str(x) for x in F_Mean)
         mean = np.mean(F_Mean)
         var = np.var(F_Mean)
